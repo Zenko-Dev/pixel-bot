@@ -3,6 +3,7 @@ from discord.ext import commands
 
 from ..bot import PixelBot
 
+
 class Welcome(commands.Cog):
     def __init__(self, bot:PixelBot):
         self.bot = bot

@@ -1,4 +1,5 @@
 import logging
+
 from dotenv import load_dotenv
 
 from .bot import PixelBot

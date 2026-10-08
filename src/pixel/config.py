@@ -1,5 +1,5 @@
 import os
-from dataclasses  import dataclass
+from dataclasses import dataclass
 
 VALID_ENVS = ("staging", "prod")
 
