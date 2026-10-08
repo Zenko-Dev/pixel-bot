@@ -14,7 +14,7 @@ class Welcome(commands.Cog):
             return
         
         tag = "" if self.bot.settings.is_prod else "[STAGING] "
-        await channel.send(f"{tag}¡Bienvenido al servidor, {member.metion}!")
+        await channel.send(f"{tag}¡Bienvenido al servidor, {member.mention}!")
 
 async def setup(bot: PixelBot):
     await bot.add_cog(Welcome(bot))
