@@ -21,6 +21,37 @@ class Welcome(commands.Cog):
             log.exception("No se pudo cargar la tarjeta de bienvenida")
             self.card = None
 
+        if bot.settings.auto_role_id == 0:
+            log.warning("AUTO_ROLE_ID no está configurado: no se asignará rol")
+
+    async def _assign_role(self, member: discord.Member):
+        """Da el rol automático al entrar. Si falla, avisa y la bienvenida sigue."""
+        role_id = self.bot.settings.auto_role_id
+        if role_id == 0 or member.bot:
+            return
+
+        role = member.guild.get_role(role_id)
+        if role is None:
+            await self.bot.report_error(
+                "rol automático",
+                RuntimeError(
+                    f"No existe un rol con ID {role_id}. Revisa AUTO_ROLE_ID."
+                ),
+            )
+            return
+
+        try:
+            await member.add_roles(role, reason="Rol automático de bienvenida")
+        except discord.Forbidden as error:
+            explanation = RuntimeError(
+                f"Discord no dejó dar el rol '{role.name}'. Revisa que el bot tenga "
+                "el permiso Gestionar roles y que su rol esté ARRIBA de ese rol."
+            )
+            explanation.__cause__ = error
+            await self.bot.report_error("rol automático", explanation)
+        except discord.HTTPException as error:
+            await self.bot.report_error("rol automático", error)
+
     async def _make_image(self, member: discord.Member) -> discord.File | None:
         """Crea la imagen; si algo falla, avisa al canal de errores y devuelve None."""
         if self.card is None:
@@ -42,6 +73,9 @@ class Welcome(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
+        # El rol va primero: no depende de que exista el canal de bienvenida
+        await self._assign_role(member)
+
         channel = self.bot.target_channel(self.bot.settings.welcome_channel_id)
         if channel is None:
             return
