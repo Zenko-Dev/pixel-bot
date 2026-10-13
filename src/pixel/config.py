@@ -10,6 +10,8 @@ class Settings:
     staging_channel_id: int
     error_channel_id: int
     welcome_channel_id: int
+    welcome_channel_id: int
+    auto_role_id: int
 
     @property
     def is_prod(self) -> bool:
@@ -33,4 +35,6 @@ def load_settings() -> Settings:
         staging_channel_id=_get_int("STAGING_CHANNEL_ID"),
         error_channel_id=_get_int("ERROR_CHANNEL_ID"),
         welcome_channel_id=_get_int("WELCOME_CHANNEL_ID"),
+        welcome_channel_id=_get_int("WELCOME_CHANNEL_ID"),
+        auto_role_id=_get_int("AUTO_ROLE_ID"),
     )
